@@ -1,20 +1,21 @@
 import { Home, BookOpen, ClipboardList, BarChart2, MessageSquare, Settings, LogOut, HelpCircle, Bell, ChevronLeft, ChevronRight } from "lucide-react"
 import { useState } from "react"
+import { Link, useLocation } from "react-router-dom"
 import Calendar from "./Calendar"
 
 export default function StudentSidebar() {
-  const [activeItem, setActiveItem] = useState("dashboard")
+  const location = useLocation()
   const [notifications, setNotifications] = useState(3) // Example notification count
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: <Home size={20} /> },
-    { id: "courses", label: "Courses", icon: <BookOpen size={20} /> },
-    { id: "assignments", label: "Assignments", icon: <ClipboardList size={20} /> },
-    { id: "quizzes", label: "Quizzes", icon: <ClipboardList size={20} /> },
-    { id: "grades", label: "Grades & Analytics", icon: <BarChart2 size={20} /> },
-    { id: "messages", label: "Messages", icon: <MessageSquare size={20} /> },
-    { id: "settings", label: "Settings", icon: <Settings size={20} /> },
+    { id: "dashboard", label: "Dashboard", icon: <Home size={20} />, path: "/student/dashboard" },
+    { id: "courses", label: "Courses", icon: <BookOpen size={20} />, path: "/student/courses" },
+    { id: "assignments", label: "Assignments", icon: <ClipboardList size={20} />, path: "/student/assignments" },
+    { id: "quizzes", label: "Quizzes", icon: <ClipboardList size={20} />, path: "/student/quizzes" },
+    { id: "grades", label: "Grades & Analytics", icon: <BarChart2 size={20} />, path: "/student/grades" },
+    { id: "messages", label: "Messages", icon: <MessageSquare size={20} />, path: "/student/messages" },
+    { id: "settings", label: "Settings", icon: <Settings size={20} />, path: "/student/settings" },
   ]
 
   return (
@@ -75,11 +76,11 @@ export default function StudentSidebar() {
       {/* Main Navigation */}
       <nav className="flex-1 py-4">
         {menuItems.map((item) => (
-          <button
+          <Link
             key={item.id}
-            onClick={() => setActiveItem(item.id)}
+            to={item.path}
             className={`flex items-center gap-3 w-full px-4 py-3 text-sm ${
-              activeItem === item.id
+              location.pathname === item.path
                 ? "bg-purple-50 text-purple-600 border-r-4 border-purple-600"
                 : "text-gray-600 hover:bg-gray-50"
             }`}
@@ -87,7 +88,7 @@ export default function StudentSidebar() {
           >
             <span className="flex-shrink-0">{item.icon}</span>
             {!isCollapsed && <span className="truncate">{item.label}</span>}
-          </button>
+          </Link>
         ))}
       </nav>
 
@@ -97,14 +98,14 @@ export default function StudentSidebar() {
       {/* Footer Section */}
       {!isCollapsed && (
         <div className="p-4 border-t border-gray-200">
-          <button className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4">
+          <Link to="/student/help" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4">
             <HelpCircle size={20} />
             <span className="text-sm">Help & Support</span>
-          </button>
-          <button className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+          </Link>
+          <Link to="/logout" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
             <LogOut size={20} />
             <span className="text-sm">Logout</span>
-          </button>
+          </Link>
         </div>
       )}
     </div>
