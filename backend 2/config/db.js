@@ -1,21 +1,18 @@
+// config/db.js
+require('dotenv').config();
 const mongoose = require('mongoose');
 
-const connectDB = async () => {
-    try {
-        if (!process.env.MONGODB_URI || !process.env.DB_NAME) {
-            throw new Error("Missing MONGODB_URI or DB_NAME in environment variables.");
-        }
-
-        const connectInstance = await mongoose.connect(`${process.env.MONGODB_URI}/${process.env.DB_NAME}`, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-
-        console.log(`✅ MongoDB connected. DB HOST: ${connectInstance.connection.host}`);
-    } catch (error) {
-        console.error("❌ MONGODB CONNECTION FAILED:", error);
-        process.exit(1);
-    }
-};
+async function connectDB() {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log(`✅ MongoDB connected on host ${conn.connection.host}`);
+  } catch (err) {
+    console.error('❌ MongoDB CONNECTION FAILED:', err.message);
+    process.exit(1);
+  }
+}
 
 module.exports = connectDB;
