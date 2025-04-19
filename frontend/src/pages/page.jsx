@@ -5,11 +5,14 @@ import CourseProgressList from "../components/CourseProgressList"
 import ContinueWatching from "../components/ContinueWatching"
 import MentorSection from "../components/MentorSection"
 import CourseTable from "../components/CourseTable"
-import ProfileSidebar from "../components/ProfileSidebar"
+import StudentSidebar from "../components/StudentSidebar"
 
 export default function Dashboard() {
   return (
     <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar */}
+      <StudentSidebar />
+
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
         <SearchBar />
@@ -19,9 +22,6 @@ export default function Dashboard() {
         <MentorSection />
         <CourseTable />
       </div>
-
-      {/* Sidebar */}
-      <ProfileSidebar />
     </div>
   )
 }
