@@ -1,16 +1,17 @@
-import { useState } from 'react'
-import './style.css'
-import LoginPopup from './components/LoginPopup.jsx'
-import SignupPopup from './components/SignupPopup.jsx'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPopup from './components/LoginPopup';
+import SignupForm from './components/SignupForm';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-    <SignupPopup/>
-    </>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginPopup />} />
+        <Route path="/login" element={<LoginPopup />} />
+        <Route path="/register" element={<SignupForm />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
