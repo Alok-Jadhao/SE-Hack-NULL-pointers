@@ -1,19 +1,61 @@
 import { useState } from 'react';
 import { EyeOff, Eye } from 'lucide-react';
+import axios from 'axios';
 
 export default function SignInForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ email, password, keepLoggedIn });
+    setLoading(true);
+    setError('');
+    setSuccess(false);
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/login', {
+        email,
+        password
+      });
+
+      // Store the token in localStorage if "Keep me logged in" is checked
+      if (keepLoggedIn) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify({
+          id: response.data._id,
+          name: response.data.name,
+          email: response.data.email,
+          role: response.data.role
+        }));
+      } else {
+        sessionStorage.setItem('token', response.data.token);
+        sessionStorage.setItem('user', JSON.stringify({
+          id: response.data._id,
+          name: response.data.name,
+          email: response.data.email,
+          role: response.data.role
+        }));
+      }
+
+      setSuccess(true);
+      // Redirect to dashboard or home page after successful login
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 1500);
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred during login');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -21,6 +63,18 @@ export default function SignInForm() {
       <div className="w-full max-w-md">
         <h1 className="text-4xl font-bold text-gray-800 mb-2">Sign in</h1>
         <p className="text-gray-500 mb-6">Please login to continue to your account.</p>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+            {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-lg">
+            Login successful! Redirecting...
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -32,6 +86,7 @@ export default function SignInForm() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="email@example.com"
+              required
             />
           </div>
 
@@ -45,6 +100,7 @@ export default function SignInForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Password"
+                required
               />
               <button
                 type="button"
@@ -69,9 +125,10 @@ export default function SignInForm() {
 
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg mb-4"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={loading}
           >
-            Sign in
+            {loading ? 'Signing in...' : 'Sign in'}
           </button>
 
           <div className="flex items-center justify-center mb-4">
