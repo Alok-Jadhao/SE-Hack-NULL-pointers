@@ -20,14 +20,14 @@ function App() {
       <Routes>
         {userRole === 'instructor' ? (
           <Route path="/" element={<InstructorLayout />}>
-            <Route index element={<InstructorDashboard />} />
+            <Route index path='instructor/dashboard' element={<InstructorDashboard />} />
             {/* Add other instructor routes here */}
           </Route>
         ) : (
           <Route path="/" element={<StudentLayout />}>
-            <Route index element={<Navigate to="/student/dashboard" replace />} />
+            <Route index element={<Navigate to="dashboard" replace />} />
 
-            <Route path="student/dashboard" element={<Page />} />
+            <Route path="/dashboard" element={<Page />} />
             <Route path="student/courses" element={<Courses />} />
             <Route path="student/assignments" element={<Assignments />} />
             <Route path="student/quizzes" element={<div>Quizzes Page</div>} />

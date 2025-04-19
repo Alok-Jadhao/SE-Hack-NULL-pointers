@@ -14,7 +14,7 @@ export default function InstructorDashboard() {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <InstructorSidebar />
+      {/* <InstructorSidebar /> */}
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto">

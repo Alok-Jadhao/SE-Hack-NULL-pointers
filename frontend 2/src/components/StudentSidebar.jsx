@@ -2,14 +2,15 @@ import { Home, BookOpen, ClipboardList, BarChart2, MessageSquare, Settings, LogO
 import { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import Calendar from "./Calendar"
+import { studentData } from "../pages/student/dummyData"
 
 export default function StudentSidebar() {
   const location = useLocation()
-  const [notifications, setNotifications] = useState(3) // Example notification count
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const { profile, stats, notifications } = studentData
 
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: <Home size={20} />, path: "/student/dashboard" },
+    { id: "dashboard", label: "Dashboard", icon: <Home size={20} />, path: "/dashboard" },
     { id: "courses", label: "Courses", icon: <BookOpen size={20} />, path: "/student/courses" },
     { id: "assignments", label: "Assignments", icon: <ClipboardList size={20} />, path: "/student/assignments" },
     { id: "quizzes", label: "Quizzes", icon: <ClipboardList size={20} />, path: "/student/quizzes" },
@@ -17,6 +18,9 @@ export default function StudentSidebar() {
     { id: "messages", label: "Messages", icon: <MessageSquare size={20} />, path: "/student/messages" },
     { id: "settings", label: "Settings", icon: <Settings size={20} />, path: "/student/settings" },
   ]
+
+  const unreadNotifications = notifications.filter(n => !n.read).length
+  const progressPercentage = Math.round((stats.completedCourses / stats.totalCourses) * 100)
 
   return (
     <div className={`${isCollapsed ? 'w-16' : 'w-64'} fixed left-0 top-0 h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out relative`}>
@@ -34,14 +38,14 @@ export default function StudentSidebar() {
           <div className="flex items-center gap-3">
             <div className="relative flex-shrink-0">
               <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white ring-2 ring-purple-500">
-                <img src="/placeholder.svg" alt="Profile" className="w-full h-full object-cover" />
+                <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
               </div>
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
             </div>
             {!isCollapsed && (
               <div>
-                <div className="font-semibold">Hello, Prashant!</div>
-                <div className="text-xs text-gray-500">Student</div>
+                <div className="font-semibold">Hello, {profile.name.split(' ')[0]}!</div>
+                <div className="text-xs text-gray-500">{profile.department}</div>
               </div>
             )}
           </div>
@@ -49,9 +53,9 @@ export default function StudentSidebar() {
             <div className="relative">
               <button className="p-2 rounded-full hover:bg-gray-100">
                 <Bell size={20} />
-                {notifications > 0 && (
+                {unreadNotifications > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    {notifications}
+                    {unreadNotifications}
                   </span>
                 )}
               </button>
@@ -64,10 +68,17 @@ export default function StudentSidebar() {
           <div className="mt-4 space-y-2">
             <div className="flex justify-between text-xs">
               <span className="text-gray-600">Course Progress</span>
-              <span className="text-purple-600">65%</span>
+              <span className="text-purple-600">{progressPercentage}%</span>
             </div>
             <div className="h-2 bg-gray-200 rounded-full">
-              <div className="h-2 bg-purple-600 rounded-full" style={{ width: "65%" }}></div>
+              <div 
+                className="h-2 bg-purple-600 rounded-full transition-all duration-500" 
+                style={{ width: `${progressPercentage}%` }}
+              ></div>
+            </div>
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>{stats.completedCourses} completed</span>
+              <span>{stats.totalCourses} total</span>
             </div>
           </div>
         )}

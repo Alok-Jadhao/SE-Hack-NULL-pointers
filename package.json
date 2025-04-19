@@ -1,0 +1,20 @@
+{
+  "name": "se-hack-null-pointers",
+  "version": "1.0.0",
+  "description": "A full-stack application with React frontend and Node.js backend",
+  "private": true,
+  "scripts": {
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+    "start:frontend": "cd \"frontend 2\" && npm run dev",
+    "start:backend": "cd \"backend 2\" && npm run dev",
+    "install:all": "npm install && cd \"frontend 2\" && npm install && cd ../\"backend 2\" && npm install",
+    "dev": "npm run start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "workspaces": [
+    "frontend 2",
+    "backend 2"
+  ]
+} 

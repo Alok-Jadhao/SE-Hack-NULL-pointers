@@ -1,15 +1,13 @@
-import "../../style.css"
+import { Outlet } from 'react-router-dom'
+import InstructorSidebar from '../../components/InstructorSidebar'
 
-export const metadata = {
-  title: "Instructor Dashboard - Online Learning Platform",
-  description: "Instructor dashboard for managing courses and students",
-  generator: 'v0.dev'
-}
-
-export default function InstructorLayout({ children }) {
+export default function InstructorLayout() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {children}
+    <div className="flex min-h-screen bg-gray-50">
+      <InstructorSidebar />
+      <main className="flex-1  p-8">
+        <Outlet /> {/* Renders nested routes like dashboard */}
+      </main>
     </div>
   )
-} 
+}
