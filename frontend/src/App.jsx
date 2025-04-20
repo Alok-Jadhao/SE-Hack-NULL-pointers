@@ -15,6 +15,7 @@ import LoginPopup from './components/LoginPopup.jsx'
 import SignupPopup from './components/SignupPopup.jsx'
 import InstructorQuizzes from './pages/instructor/quizzes.jsx'
 import QuizCreate from './pages/instructor/quiz-create.jsx'
+import QuizEdit from './pages/instructor/quiz-edit.jsx'
 
 // Helper function to get user data from storage
 const getUserData = () => {
@@ -99,6 +100,7 @@ function App() {
           <Route path="dashboard" element={<InstructorDashboard />} />
           <Route path="quizzes" element={<InstructorQuizzes />} />
           <Route path="quizzes/create" element={<QuizCreate />} />
+          <Route path="quizzes/edit/:quizId" element={<QuizEdit />} />
           {/* Add other instructor routes here */}
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
