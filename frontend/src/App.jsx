@@ -13,6 +13,8 @@ import Messages from './pages/student/messages.jsx'
 import Settings from './pages/student/settings.jsx'
 import LoginPopup from './components/LoginPopup.jsx'
 import SignupPopup from './components/SignupPopup.jsx'
+import InstructorQuizzes from './pages/instructor/quizzes.jsx'
+import QuizCreate from './pages/instructor/quiz-create.jsx'
 
 // Helper function to get user data from storage
 const getUserData = () => {
@@ -95,6 +97,8 @@ function App() {
           {/* Define nested routes relative to InstructorLayout */}
           {/* Note: Removed the outer "/" path for instructor layout */}
           <Route path="dashboard" element={<InstructorDashboard />} />
+          <Route path="quizzes" element={<InstructorQuizzes />} />
+          <Route path="quizzes/create" element={<QuizCreate />} />
           {/* Add other instructor routes here */}
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>
@@ -114,9 +118,10 @@ function App() {
 function RootRedirect() {
   const currentUser = getUserData()
   if (!currentUser) {
+    // If NO user data found, redirect to login
     return <Navigate to="/login" replace />
   }
-  // Redirect based on role
+  // If user data IS found, redirect based on role
   if (currentUser.role === 'instructor') {
     return <Navigate to="/instructor/dashboard" replace />
   } else {

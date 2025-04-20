@@ -1,22 +1,36 @@
 import { Home, BookOpen, ClipboardList, Users, BarChart2, Settings, LogOut, HelpCircle, ChevronLeft, ChevronRight } from "lucide-react"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 export default function InstructorSidebar() {
+  const navigate = useNavigate()
   const [activeItem, setActiveItem] = useState("dashboard")
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: <Home size={20} /> },
-    { id: "courses", label: "Courses", icon: <BookOpen size={20} /> },
-    { id: "quizzes", label: "Quizzes", icon: <ClipboardList size={20} /> },
-    { id: "students", label: "Students", icon: <Users size={20} /> },
-    { id: "analytics", label: "Analytics", icon: <BarChart2 size={20} /> },
-    { id: "settings", label: "Settings", icon: <Settings size={20} /> },
+    { id: "dashboard", label: "Dashboard", icon: <Home size={20} />, path: "/instructor/dashboard" },
+    { id: "courses", label: "Courses", icon: <BookOpen size={20} />, path: "/instructor/courses" },
+    { id: "quizzes", label: "Quizzes", icon: <ClipboardList size={20} />, path: "/instructor/quizzes" },
+    { id: "students", label: "Students", icon: <Users size={20} />, path: "/instructor/students" },
+    { id: "analytics", label: "Analytics", icon: <BarChart2 size={20} />, path: "/instructor/analytics" },
+    { id: "settings", label: "Settings", icon: <Settings size={20} />, path: "/instructor/settings" },
   ]
+
+  const handleMenuItemClick = (id, path) => {
+    setActiveItem(id)
+    navigate(path)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('user')
+    navigate('/login')
+  }
 
   return (
     <div className={`${isCollapsed ? 'w-16' : 'w-64'} fixed left-0 top-0 h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out relative`}>
-      {/* Collapse Button */}
       <button 
         onClick={() => setIsCollapsed(!isCollapsed)}
         className="absolute right-0 top-4 p-1 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-gray-50 transition-transform duration-300 hover:scale-110 z-10"
@@ -24,7 +38,6 @@ export default function InstructorSidebar() {
         {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
       </button>
 
-      {/* Top Section - Logo and Title */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center gap-2 font-bold text-xl text-[#3A506B]">
           <span>TIPS-G</span>
@@ -34,7 +47,6 @@ export default function InstructorSidebar() {
         )}
       </div>
 
-      {/* Profile Section */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center gap-3">
           <div className="relative flex-shrink-0">
@@ -52,12 +64,11 @@ export default function InstructorSidebar() {
         </div>
       </div>
 
-      {/* Main Navigation */}
       <nav className="flex-1 py-4">
         {menuItems.map((item) => (
           <button
             key={item.id}
-            onClick={() => setActiveItem(item.id)}
+            onClick={() => handleMenuItemClick(item.id, item.path)}
             className={`flex items-center gap-3 w-full px-4 py-3 text-sm ${
               activeItem === item.id
                 ? "bg-purple-50 text-purple-600 border-r-4 border-purple-600"
@@ -71,14 +82,19 @@ export default function InstructorSidebar() {
         ))}
       </nav>
 
-      {/* Footer Section */}
       {!isCollapsed && (
         <div className="p-4 border-t border-gray-200">
-          <button className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4">
+          <button 
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+            onClick={() => navigate('/instructor/help')}
+          >
             <HelpCircle size={20} />
             <span className="text-sm">Help & Support</span>
           </button>
-          <button className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+          <button 
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+            onClick={handleLogout}
+          >
             <LogOut size={20} />
             <span className="text-sm">Logout</span>
           </button>
