@@ -1,0 +1,15 @@
+{
+  "title": "Sample Quiz",
+  "questions": [
+    {
+      "questionText": "What is the capital of France?",
+      "options": [
+        { "text": "London", "isCorrect": false },
+        { "text": "Paris", "isCorrect": true },
+        { "text": "Berlin", "isCorrect": false },
+        { "text": "Madrid", "isCorrect": false }
+      ],
+      "points": 1
+    }
+  ]
+} 

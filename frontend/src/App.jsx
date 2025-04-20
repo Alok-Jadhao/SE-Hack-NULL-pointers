@@ -16,6 +16,8 @@ import SignupPopup from './components/SignupPopup.jsx'
 import InstructorQuizzes from './pages/instructor/quizzes.jsx'
 import QuizCreate from './pages/instructor/quiz-create.jsx'
 import QuizEdit from './pages/instructor/quiz-edit.jsx'
+import InstructorStudents from './pages/instructor/students.jsx'
+import InstructorAnalytics from './pages/instructor/analytics.jsx'
 
 // Helper function to get user data from storage
 const getUserData = () => {
@@ -55,6 +57,21 @@ function ProtectedRoute({ role, children }) {
 
 function App() {
   // No need for local state for role here, we read from storage in ProtectedRoute
+
+  const downloadTemplate = (format) => {
+    const templates = {
+      json: '/templates/quiz-template.json',
+      csv: '/templates/quiz-template.csv',
+      excel: '/templates/quiz-template.xlsx'
+    };
+
+    const link = document.createElement('a');
+    link.href = templates[format];
+    link.download = `quiz-template.${format}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <BrowserRouter>
@@ -101,6 +118,11 @@ function App() {
           <Route path="quizzes" element={<InstructorQuizzes />} />
           <Route path="quizzes/create" element={<QuizCreate />} />
           <Route path="quizzes/edit/:quizId" element={<QuizEdit />} />
+          
+          {/* Add our new routes */}
+          <Route path="students" element={<InstructorStudents />} />
+          <Route path="analytics" element={<InstructorAnalytics />} />
+          
           {/* Add other instructor routes here */}
           <Route index element={<Navigate to="dashboard" replace />} />
         </Route>

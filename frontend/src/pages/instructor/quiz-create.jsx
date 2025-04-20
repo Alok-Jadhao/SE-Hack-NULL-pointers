@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Plus, Save, ChevronLeft, HelpCircle, Trash } from 'lucide-react';
+import { X, Plus, Save, ChevronLeft, HelpCircle, Trash, Upload } from 'lucide-react';
 
 export default function QuizCreate() {
   const navigate = useNavigate();
@@ -32,6 +32,10 @@ export default function QuizCreate() {
     { id: 2, title: 'Advanced React' },
     { id: 3, title: 'Database Design' }
   ]);
+
+  // Add these to the existing component's state
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const fileInputRef = useRef(null);
 
   // Handle basic quiz info changes
   const handleQuizChange = (e) => {
@@ -175,6 +179,52 @@ export default function QuizCreate() {
     navigate('/instructor/quizzes');
   };
 
+  // Add this function to handle file uploads
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['.xlsx', '.xls', '.csv', '.json'];
+    const fileType = '.' + file.name.split('.').pop().toLowerCase();
+    
+    if (!allowedTypes.includes(fileType)) {
+      alert('Please upload an Excel, CSV, or JSON file');
+      return;
+    }
+
+    setUploadedFile(file);
+
+    // Create FormData
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('title', quiz.title);
+    formData.append('course', quiz.course);
+    formData.append('duration', quiz.duration);
+    formData.append('passingScore', quiz.passingScore);
+
+    try {
+      const response = await fetch('/api/quizzes/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) throw new Error('Upload failed');
+
+      const data = await response.json();
+      // Update quiz state with uploaded data
+      setQuiz(prev => ({
+        ...prev,
+        questions: data.uploadedQuizData.questions
+      }));
+
+      alert('Quiz file uploaded successfully!');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('Failed to upload file. Please try again.');
+    }
+  };
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-6">
@@ -286,6 +336,44 @@ export default function QuizCreate() {
             rows="3"
             className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           ></textarea>
+        </div>
+      </div>
+
+      {/* Upload Quiz File */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 className="text-xl font-bold mb-4">Upload Quiz</h2>
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            accept=".xlsx,.xls,.csv,.json"
+            className="hidden"
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center justify-center gap-2 mx-auto mb-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100"
+          >
+            <Upload size={20} />
+            <span>Upload Quiz File</span>
+          </button>
+          <p className="text-sm text-gray-500">
+            Upload Excel, CSV, or JSON file containing quiz questions
+          </p>
+          {uploadedFile && (
+            <div className="mt-4 text-sm text-gray-700">
+              Uploaded: {uploadedFile.name}
+            </div>
+          )}
+        </div>
+        
+        <div className="mt-4">
+          <h3 className="font-medium text-sm text-gray-700 mb-2">Supported Formats:</h3>
+          <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
+            <li>Excel (.xlsx, .xls)</li>
+            <li>CSV (.csv)</li>
+            <li>JSON (.json)</li>
+          </ul>
         </div>
       </div>
 

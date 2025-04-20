@@ -3,6 +3,7 @@ import { EyeOff, Eye } from 'lucide-react';
 import axios from 'axios';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { useNavigate, Link } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
 
 export default function SignInForm() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function SignInForm() {
     setSuccess(false);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
+      const response = await axios.post(API_ENDPOINTS.LOGIN, {
         email,
         password
       });
@@ -44,7 +45,7 @@ export default function SignInForm() {
       setError('');
       setSuccess(false);
 
-      const response = await axios.post('http://localhost:5000/api/auth/google', {
+      const response = await axios.post(API_ENDPOINTS.GOOGLE_LOGIN, {
         token: credentialResponse.credential,
         isSignup: false
       });
@@ -184,7 +185,7 @@ export default function SignInForm() {
                 shape="rectangular"
                 width="100%"
                 ux_mode="redirect"
-                redirect_uri="http://localhost:5000/api/auth/google"
+                redirect_uri={API_ENDPOINTS.GOOGLE_LOGIN}
               />
             </div>
           </GoogleOAuthProvider>
