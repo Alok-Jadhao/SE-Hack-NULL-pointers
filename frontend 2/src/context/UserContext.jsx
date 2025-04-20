@@ -16,7 +16,6 @@ export function UserProvider({ children }) {
     year: 'Final Year',
     enrollmentNumber: '2020CS12345',
     enrolledCourses: ['1', '2', '3'],
-    enrolledCoursesCount: 3,
     createdAt: '2020-08-01',
     lastLogin: '2024-03-20',
     timezone: 'UTC+5:30',
@@ -44,34 +43,8 @@ export function UserProvider({ children }) {
     setUser(prev => ({ ...prev, ...newData }))
   }
 
-  const enrollInCourse = (courseId) => {
-    setUser(prev => {
-      if (!prev.enrolledCourses.includes(courseId)) {
-        return {
-          ...prev,
-          enrolledCourses: [...prev.enrolledCourses, courseId],
-          enrolledCoursesCount: prev.enrolledCoursesCount + 1
-        }
-      }
-      return prev
-    })
-  }
-
-  const unenrollFromCourse = (courseId) => {
-    setUser(prev => {
-      if (prev.enrolledCourses.includes(courseId)) {
-        return {
-          ...prev,
-          enrolledCourses: prev.enrolledCourses.filter(id => id !== courseId),
-          enrolledCoursesCount: prev.enrolledCoursesCount - 1
-        }
-      }
-      return prev
-    })
-  }
-
   return (
-    <UserContext.Provider value={{ user, updateUser, enrollInCourse, unenrollFromCourse }}>
+    <UserContext.Provider value={{ user, updateUser }}>
       {children}
     </UserContext.Provider>
   )

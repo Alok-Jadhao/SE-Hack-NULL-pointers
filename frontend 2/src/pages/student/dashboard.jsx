@@ -6,11 +6,8 @@ import MentorSection from "../../components/MentorSection"
 import CourseTable from "../../components/CourseTable"
 import { coursesData } from '../../data/courses'
 import SearchBar2 from './SearchBar2'
-import { useUser } from '../context/UserContext'
-
 export default function StudentDashboard() {
   const navigate = useNavigate()
-  const { user } = useUser()
   const [searchQuery, setSearchQuery] = useState('')
   const [notifications, setNotifications] = useState([])
   const [currentPage, setCurrentPage] = useState(0)
@@ -61,64 +58,43 @@ export default function StudentDashboard() {
 
   return (
     <div className="p-6">
-      {/* Welcome Section */}
-      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">Welcome back, {user.firstName}!</h1>
-        <p className="text-gray-600">Here's what's happening with your courses today.</p>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Enrolled Courses</p>
-              <h3 className="text-2xl font-bold text-gray-800">{user.enrolledCoursesCount}</h3>
-            </div>
-            <div className="p-3 bg-purple-100 rounded-lg">
-              <BookOpen className="w-6 h-6 text-purple-600" />
-            </div>
-          </div>
-        </div>
-        {/* ... other stats cards ... */}
-      </div>
 
       {/* Search Bar */}
-      <SearchBar2 />
+     <SearchBar2 />
       {/* Hero Banner */}
       
-      <div className="mx-4 mb-8 z-1 rounded-xl bg-gradient-to-r from-purple-600 to-purple-500 p-8 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-full h-full">
-          <div className="absolute top-4 right-4 text-white/20">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-            </svg>
-          </div>
-          <div className="absolute top-12 right-12 text-white/20">
-            <svg width="100" height="100" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-            </svg>
-          </div>
-          <div className="absolute bottom-4 right-20 text-white/20">
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-            </svg>
-          </div>
+    <div className="mx-4 mb-8 z-1 rounded-xl bg-gradient-to-r from-purple-600 to-purple-500 p-8 text-white relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-full h-full">
+        <div className="absolute top-4 right-4 text-white/20">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+          </svg>
         </div>
-        <div className="relative z-10">
-          <div className="text-sm font-medium mb-2">ONLINE COURSE</div>
-          <h1 className="text-2xl md:text-3xl font-bold mb-4">
-            Sharpen Your Skills With
-            <br />
-            Professional Online Courses
-          </h1>
-          <button className="bg-black text-white rounded-full px-5 py-2 flex items-center gap-2 text-sm font-medium">
-            Join Now
-            <div className="bg-white text-black rounded-full w-5 h-5 flex items-center justify-center text-xs">$</div>
-          </button>
+        <div className="absolute top-12 right-12 text-white/20">
+          <svg width="100" height="100" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+          </svg>
+        </div>
+        <div className="absolute bottom-4 right-20 text-white/20">
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+          </svg>
         </div>
       </div>
-    
+      <div className="relative z-10">
+        <div className="text-sm font-medium mb-2">ONLINE COURSE</div>
+        <h1 className="text-2xl md:text-3xl font-bold mb-4">
+          Sharpen Your Skills With
+          <br />
+          Professional Online Courses
+        </h1>
+        <button className="bg-black text-white rounded-full px-5 py-2 flex items-center gap-2 text-sm font-medium">
+          Join Now
+          <div className="bg-white text-black rounded-full w-5 h-5 flex items-center justify-center text-xs">$</div>
+        </button>
+      </div>
+    </div>
+  
 
 
 

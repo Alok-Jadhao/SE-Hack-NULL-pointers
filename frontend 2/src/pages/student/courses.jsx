@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { coursesData } from '../../data/courses'
 import SearchBar2 from './SearchBar2'
-import { useUser } from '../context/UserContext'
 
 export default function Courses() {
   const navigate = useNavigate()
@@ -14,9 +13,7 @@ export default function Courses() {
   const [selectedCourse, setSelectedCourse] = useState(null)
   const [enrolledCourses, setEnrolledCourses] = useState(coursesData.slice(0, 3))
   const [availableCourses, setAvailableCourses] = useState(coursesData.slice(3))
-  const [filteredEnrolledCourses, setFilteredEnrolledCourses] = useState(enrolledCourses)
-  const [filteredAvailableCourses, setFilteredAvailableCourses] = useState(availableCourses)
-  const { user, enrollInCourse, unenrollFromCourse } = useUser()
+  const [filteredCourses, setFilteredCourses] = useState(coursesData)
 
   const categories = [
     { id: 'all', name: 'All Courses' },
@@ -29,71 +26,66 @@ export default function Courses() {
     { id: 'devops', name: 'DevOps' }
   ]
 
-  // Handle category filtering
   useEffect(() => {
-    const filterCourses = (courses) => {
-      if (activeTab === 'all') {
-        return courses
-      }
-      return courses.filter(course => course.category.toLowerCase() === activeTab)
-    }
-
-    setFilteredEnrolledCourses(filterCourses(enrolledCourses))
-    setFilteredAvailableCourses(filterCourses(availableCourses))
-  }, [activeTab, enrolledCourses, availableCourses])
-
-  // Handle search
-  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search)
     const searchQuery = searchParams.get('search')?.toLowerCase() || ''
 
     if (searchQuery) {
-      const filterBySearch = (courses) => {
-        return courses.filter(course => 
-          course.title.toLowerCase().includes(searchQuery) ||
-          course.instructor.toLowerCase().includes(searchQuery) ||
-          course.description.toLowerCase().includes(searchQuery) ||
-          course.category.toLowerCase().includes(searchQuery)
-        )
-      }
-
-      setFilteredEnrolledCourses(filterBySearch(enrolledCourses))
-      setFilteredAvailableCourses(filterBySearch(availableCourses))
+      const filteredEnrolled = enrolledCourses.filter(course => 
+        course.title.toLowerCase().includes(searchQuery) ||
+        course.instructor.toLowerCase().includes(searchQuery) ||
+        course.description.toLowerCase().includes(searchQuery)
+      )
+      const filteredAvailable = availableCourses.filter(course => 
+        course.title.toLowerCase().includes(searchQuery) ||
+        course.instructor.toLowerCase().includes(searchQuery) ||
+        course.description.toLowerCase().includes(searchQuery)
+      )
+      setEnrolledCourses(filteredEnrolled)
+      setAvailableCourses(filteredAvailable)
     } else {
-      // If no search query, apply only category filter
-      const filterCourses = (courses) => {
-        if (activeTab === 'all') {
-          return courses
-        }
-        return courses.filter(course => course.category.toLowerCase() === activeTab)
-      }
-
-      setFilteredEnrolledCourses(filterCourses(enrolledCourses))
-      setFilteredAvailableCourses(filterCourses(availableCourses))
+      setEnrolledCourses(coursesData.slice(0, 3))
+      setAvailableCourses(coursesData.slice(3))
     }
-  }, [searchParams, enrolledCourses, availableCourses, activeTab])
+  }, [location.search])
 
-  const handleEnroll = (courseId) => {
-    enrollInCourse(courseId)
-    setShowEnrollmentModal(false)
-    setSelectedCourse(null)
+  const handleSearch = (query) => {
+    if (query) {
+      const filtered = coursesData.filter(course => 
+        course.title.toLowerCase().includes(query.toLowerCase()) ||
+        course.instructor.toLowerCase().includes(query.toLowerCase()) ||
+        course.category.toLowerCase().includes(query.toLowerCase()) ||
+        course.description.toLowerCase().includes(query.toLowerCase())
+      )
+      setFilteredCourses(filtered)
+    } else {
+      // If search is empty, show all courses
+      setFilteredCourses(availableCourses)
+    }
   }
 
-  const handleUnenroll = (courseId) => {
-    unenrollFromCourse(courseId)
+  const handleEnroll = (course) => {
+    const newEnrolledCourse = {
+      ...course,
+      progress: 0,
+      lastAccessed: new Date().toISOString().split('T')[0]
+    }
+    setEnrolledCourses(prev => [...prev, newEnrolledCourse])
+    setAvailableCourses(prev => prev.filter(c => c.id !== course.id))
   }
 
   return (
     <div className="p-6">
-      <SearchBar2 />
+      <SearchBar2 onSearch={handleSearch} />
       
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">My Courses</h1>
-        <div className="flex gap-2 overflow-x-auto pb-2">
+        <div className="flex gap-2">
           {categories.map(category => (
             <button
               key={category.id}
               onClick={() => setActiveTab(category.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+              className={`px-4 py-2 rounded-full text-sm font-medium ${
                 activeTab === category.id
                   ? 'bg-purple-600 text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -109,7 +101,7 @@ export default function Courses() {
       <div className="mb-8">
         <h2 className="text-lg font-semibold mb-4">Enrolled Courses</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEnrolledCourses.map((course) => (
+          {enrolledCourses.map((course) => (
             <div key={course.id} className="bg-white rounded-lg shadow overflow-hidden hover-scale transition-all duration-300 hover:shadow-lg">
               <div className="h-48">
                 <img src={course.image} alt={course.title} className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
@@ -140,7 +132,7 @@ export default function Courses() {
       <div>
         <h2 className="text-lg font-semibold mb-4">Available Courses</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAvailableCourses.map((course) => (
+          {availableCourses.map((course) => (
             <div key={course.id} className="bg-white rounded-lg shadow overflow-hidden hover-scale transition-all duration-300 hover:shadow-lg">
               <div className="h-48">
                 <img src={course.image} alt={course.title} className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
@@ -150,7 +142,7 @@ export default function Courses() {
                 <p className="text-gray-600 mb-2">Instructor: {course.instructor}</p>
                 <p className="text-sm text-gray-500 mb-4 line-clamp-2">{course.description}</p>
                 <button
-                  onClick={() => handleEnroll(course.id)}
+                  onClick={() => handleEnroll(course)}
                   className="w-full py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
                 >
                   Enroll Now
@@ -181,7 +173,7 @@ export default function Courses() {
                 Cancel
               </button>
               <button
-                onClick={() => handleEnroll(selectedCourse.id)}
+                onClick={() => handleEnroll(selectedCourse)}
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
               >
                 Confirm Enrollment
