@@ -1,190 +1,331 @@
 "use client"
-import { BookOpen, Calendar, Clock, Users, Search, Bell, Plus } from 'lucide-react'
-import { useState } from 'react'
+import { BookOpen, Calendar, Clock, Users, Search, Bell, Plus, Star, ChevronRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import MentorSection from "../../components/MentorSection"
+import CourseTable from "../../components/CourseTable"
+import { coursesData } from '../../data/courses'
+import SearchBar2 from './SearchBar2'
+import { useUser } from '../context/UserContext'
 
 export default function StudentDashboard() {
+  const navigate = useNavigate()
+  const { user } = useUser()
   const [searchQuery, setSearchQuery] = useState('')
+  const [notifications, setNotifications] = useState([])
+  const [currentPage, setCurrentPage] = useState(0)
+  const [enrolledCourses, setEnrolledCourses] = useState(coursesData.slice(0, 3))
 
-  // Example course data
-  const watchedCourses = [
-    {
-      id: 1,
-      title: "Product Design",
-      progress: "2/8 Watched",
-      category: "FRONTEND",
-      image: "/course1.jpg",
-      instructor: {
-        name: "Prashant Kumar Singh",
-        role: "Software Developer",
-        avatar: "/instructor1.jpg"
-      }
-    },
-    {
-      id: 2,
-      title: "Beginner's Guide To Becoming A Professional Frontend Developer",
-      progress: "2/8 Watched",
-      category: "FRONTEND",
-      image: "/course2.jpg",
-      instructor: {
-        name: "Prashant Kumar Singh",
-        role: "Software Developer",
-        avatar: "/instructor1.jpg"
-      }
-    },
-    {
-      id: 3,
-      title: "Product Design",
-      progress: "2/8 Watched",
-      category: "FRONTEND",
-      image: "/course3.jpg",
-      instructor: {
-        name: "Prashant Kumar Singh",
-        role: "Software Developer",
-        avatar: "/instructor1.jpg"
-      }
+  const handleSearch = (e) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      navigate(`/student/courses?search=${encodeURIComponent(searchQuery)}`)
     }
-  ]
+  }
 
-  const upcomingDeadlines = [
-    {
-      id: 1,
-      title: "React Components Assignment",
-      course: "Frontend Development",
-      dueDate: "2024-03-15 at 23:59"
-    },
-    {
-      id: 2,
-      title: "JavaScript Fundamentals Quiz",
-      course: "Programming Basics",
-      dueDate: "2024-03-18 at 14:00"
-    },
-    {
-      id: 3,
-      title: "Database Design Project",
-      course: "Database Management",
-      dueDate: "2024-03-20 at 23:59"
+  const handleViewAssignments = () => {
+    navigate('/student/assignments')
+  }
+
+  const handleViewAllCourses = () => {
+    navigate('/student/courses')
+  }
+
+  const handleCourseNavigation = (direction) => {
+    if (direction === 'next' && currentPage < Math.ceil(enrolledCourses.length / 3) - 1) {
+      setCurrentPage(prev => prev + 1)
+    } else if (direction === 'prev' && currentPage > 0) {
+      setCurrentPage(prev => prev - 1)
     }
-  ]
+  }
+
+  const handleViewDeadlineDetails = (id) => {
+    navigate(`/student/assignments/${id}`)
+  }
+
+  const handleViewAllDeadlines = () => {
+    navigate('/student/assignments')
+  }
+
+  const handleViewAllAnnouncements = () => {
+    navigate('/student/announcements')
+  }
+
+  const handleViewNotifications = () => {
+    navigate('/student/notifications')
+  }
+
+  const handleContinueLearning = (courseId) => {
+    navigate(`/student/courses/${courseId}`)
+  }
 
   return (
     <div className="p-6">
-      {/* Search Bar */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="relative flex-1 max-w-2xl">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-          <input
-            type="text"
-            placeholder="Search your course here...."
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-purple-500"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        <button className="p-2 hover:bg-gray-100 rounded-full">
-          <Bell size={24} />
-        </button>
+      {/* Welcome Section */}
+      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">Welcome back, {user.firstName}!</h1>
+        <p className="text-gray-600">Here's what's happening with your courses today.</p>
       </div>
 
-      {/* Hero Banner */}
-      <div className="bg-purple-600 text-white rounded-2xl p-8 mb-8 relative overflow-hidden">
-        <div className="relative z-10">
-          <span className="text-sm font-medium mb-2 inline-block">ONLINE COURSE</span>
-          <h1 className="text-4xl font-bold mb-4">
-            Sharpen Your Skills With<br />
-            Professional Online Courses
-          </h1>
-          <button className="bg-black text-white px-6 py-2 rounded-full flex items-center gap-2">
-            Join Now
-            <span className="w-6 h-6 bg-white text-black rounded-full flex items-center justify-center text-sm">$</span>
-          </button>
-        </div>
-        <div className="absolute top-0 right-0 w-1/3 h-full">
-          {/* Add decorative stars or patterns here */}
-        </div>
-      </div>
-
-      {/* Continue Watching Section */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Continue Watching</h2>
-          <div className="flex gap-2">
-            <button className="p-2 border border-gray-200 rounded-full">
-              <span className="sr-only">Previous</span>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button className="p-2 border border-gray-200 rounded-full">
-              <span className="sr-only">Next</span>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Enrolled Courses</p>
+              <h3 className="text-2xl font-bold text-gray-800">{user.enrolledCoursesCount}</h3>
+            </div>
+            <div className="p-3 bg-purple-100 rounded-lg">
+              <BookOpen className="w-6 h-6 text-purple-600" />
+            </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {watchedCourses.map((course) => (
-            <div key={course.id} className="bg-white rounded-lg shadow overflow-hidden">
-              <div className="relative">
-                <img src={course.image} alt={course.title} className="w-full h-48 object-cover" />
-                <button className="absolute top-4 right-4 p-2 bg-white rounded-full shadow">
-                  <Plus size={20} />
-                </button>
-              </div>
-              <div className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-gray-500">{course.progress}</span>
-                  <span className="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded">
-                    {course.category}
-                  </span>
+        {/* ... other stats cards ... */}
+      </div>
+
+      {/* Search Bar */}
+      <SearchBar2 />
+      {/* Hero Banner */}
+      
+      <div className="mx-4 mb-8 z-1 rounded-xl bg-gradient-to-r from-purple-600 to-purple-500 p-8 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-full h-full">
+          <div className="absolute top-4 right-4 text-white/20">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+            </svg>
+          </div>
+          <div className="absolute top-12 right-12 text-white/20">
+            <svg width="100" height="100" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+            </svg>
+          </div>
+          <div className="absolute bottom-4 right-20 text-white/20">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+            </svg>
+          </div>
+        </div>
+        <div className="relative z-10">
+          <div className="text-sm font-medium mb-2">ONLINE COURSE</div>
+          <h1 className="text-2xl md:text-3xl font-bold mb-4">
+            Sharpen Your Skills With
+            <br />
+            Professional Online Courses
+          </h1>
+          <button className="bg-black text-white rounded-full px-5 py-2 flex items-center gap-2 text-sm font-medium">
+            Join Now
+            <div className="bg-white text-black rounded-full w-5 h-5 flex items-center justify-center text-xs">$</div>
+          </button>
+        </div>
+      </div>
+    
+
+
+
+      {/* My Courses Section */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">My Courses</h2>
+          <button 
+            onClick={handleViewAllCourses}
+            className="text-purple-600 text-sm font-medium hover:text-purple-700"
+          >
+            View All Courses
+          </button>
+        </div>
+        <div className="relative">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {enrolledCourses.slice(currentPage * 3, (currentPage + 1) * 3).map((course) => (
+              <div key={course.id} className="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="relative">
+                  <img src={course.image} alt={course.title} className="w-full h-48 object-cover" />
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-purple-600 text-white text-xs font-medium px-2 py-1 rounded">
+                      {course.category}
+                    </span>
+                  </div>
                 </div>
-                <h3 className="font-medium mb-4">{course.title}</h3>
-                <div className="flex items-center gap-3">
-                  <img
-                    src={course.instructor.avatar}
-                    alt={course.instructor.name}
-                    className="w-10 h-10 rounded-full"
-                  />
-                  <div>
-                    <p className="font-medium">{course.instructor.name}</p>
-                    <p className="text-sm text-gray-500">{course.instructor.role}</p>
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-lg font-semibold">{course.title}</h2>
+                    <div className="flex items-center gap-1">
+                      <Star size={16} className="text-yellow-400 fill-yellow-400" />
+                      <span className="text-sm">{course.rating}</span>
+                    </div>
+                  </div>
+                  <p className="text-gray-600 mb-2">Instructor: {course.instructor}</p>
+                  
+                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                    <div className="flex items-center gap-1">
+                      <Clock size={16} />
+                      <span>{course.duration}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Users size={16} />
+                      <span>{course.students} students</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <BookOpen size={16} />
+                      <span>{course.completedModules}/{course.modules} modules</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between text-sm">
+                      <span>Progress</span>
+                      <span>{course.progress}%</span>
+                    </div>
+                    <div className="h-2 bg-gray-200 rounded-full">
+                      <div 
+                        className="h-2 bg-purple-600 rounded-full" 
+                        style={{ width: `${course.progress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">Last accessed: {course.lastAccessed}</span>
+                    <button 
+                      onClick={() => handleContinueLearning(course.id)}
+                      className="flex items-center gap-1 text-purple-600 hover:text-purple-700"
+                    >
+                      Continue Learning
+                      <ChevronRight size={16} />
+                    </button>
                   </div>
                 </div>
               </div>
+            ))}
+          </div>
+          {enrolledCourses.length > 3 && (
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={() => handleCourseNavigation('prev')}
+                disabled={currentPage === 0}
+                className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => handleCourseNavigation('next')}
+                disabled={currentPage >= Math.ceil(enrolledCourses.length / 3) - 1}
+                className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
             </div>
-          ))}
+          )}
         </div>
       </div>
 
       {/* Upcoming Deadlines */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Upcoming Deadlines</h2>
-        <div className="space-y-4">
-          {upcomingDeadlines.map((deadline) => (
-            <div key={deadline.id} className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                <span className="text-purple-600 text-lg font-medium">
-                  {deadline.title.charAt(0)}
-                </span>
+      {/* <div className="mb-8"> */}
+        {/* <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">Upcoming Deadlines</h2>
+          <button 
+            onClick={handleViewAllDeadlines}
+            className="text-purple-600 text-sm font-medium hover:text-purple-700"
+          >
+            View All Deadlines
+          </button>
+        </div> */}
+        {/* <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="divide-y">
+            {[
+              {
+                id: 1,
+                title: "Web Development Project",
+                course: "Advanced Web Development",
+                dueDate: "2024-03-15",
+                timeLeft: "3 days left"
+              },
+              {
+                id: 2,
+                title: "Data Structures Assignment",
+                course: "Data Structures & Algorithms",
+                dueDate: "2024-03-18",
+                timeLeft: "6 days left"
+              },
+              {
+                id: 3,
+                title: "Machine Learning Quiz",
+                course: "Machine Learning Fundamentals",
+                dueDate: "2024-03-20",
+                timeLeft: "8 days left"
+              }
+            ].map((deadline) => (
+              <div key={deadline.id} className="p-4 hover:bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium">{deadline.title}</h3>
+                    <p className="text-sm text-gray-500">{deadline.course}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">{deadline.dueDate}</p>
+                    <p className="text-sm text-gray-500">{deadline.timeLeft}</p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <h3 className="font-medium">{deadline.title}</h3>
-                <p className="text-sm text-gray-500">{deadline.course}</p>
-                <p className="text-sm text-gray-400">{deadline.dueDate}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+            ))}
+          </div>
+        </div> */}
+      {/* </div> */}
 
-      {/* Your Mentor Section */}
-      <div className="mt-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Your Mentor</h2>
-          <button className="text-purple-600 text-sm font-medium">See All</button>
+      {/* Recent Announcements */}
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">Recent Announcements</h2>
+          <button 
+            onClick={handleViewAllAnnouncements}
+            className="text-purple-600 text-sm font-medium hover:text-purple-700"
+          >
+            View All Announcements
+          </button>
         </div>
-        {/* Add mentor cards here if needed */}
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="divide-y">
+            {[
+              {
+                id: 1,
+                title: "New Course Material Available",
+                content: "The new module for Web Development is now available. Please check it out!",
+                date: "2024-03-10",
+                time: "10:30 AM"
+              },
+              {
+                id: 2,
+                title: "Assignment Submission Reminder",
+                content: "Don't forget to submit your Data Structures assignment by Friday.",
+                date: "2024-03-09",
+                time: "2:15 PM"
+              },
+              {
+                id: 3,
+                title: "Upcoming Workshop",
+                content: "Join us for a special workshop on Machine Learning this weekend.",
+                date: "2024-03-08",
+                time: "11:00 AM"
+              }
+            ].map((announcement) => (
+              <div key={announcement.id} className="p-4 hover:bg-gray-50">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-medium">{announcement.title}</h3>
+                    <p className="text-sm text-gray-500">{announcement.content}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">{announcement.date}</p>
+                    <p className="text-sm text-gray-500">{announcement.time}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+      {/* <MentorSection /> */}
+      <CourseTable />
+
     </div>
   )
 }

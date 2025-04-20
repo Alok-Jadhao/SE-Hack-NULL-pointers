@@ -11,35 +11,39 @@ import Assignments from './pages/student/assignments.jsx'
 import Grades from './pages/student/grades.jsx'
 import Messages from './pages/student/messages.jsx'
 import Settings from './pages/student/settings.jsx'
+import Quiz from './pages/student/quiz.jsx'
+import { UserProvider } from './context/UserContext'
 
 function App() {
   const [userRole, setUserRole] = useState('student') // This should come from your auth system
 
   return (
-    <BrowserRouter>
-      <Routes>
-        {userRole === 'instructor' ? (
-          <Route path="/" element={<InstructorLayout />}>
-            <Route index element={<InstructorDashboard />} />
-            {/* Add other instructor routes here */}
-          </Route>
-        ) : (
-          <Route path="/" element={<StudentLayout />}>
-            <Route index element={<Navigate to="/student/dashboard" replace />} />
+    <UserProvider>
+      <BrowserRouter>
+        <Routes>
+          {userRole === 'instructor' ? (
+            <Route path="/" element={<InstructorLayout />}>
+              <Route index element={<InstructorDashboard />} />
+              {/* Add other instructor routes here */}
+            </Route>
+          ) : (
+            <Route path="/" element={<StudentLayout />}>
+              <Route index element={<Navigate to="/student/dashboard" replace />} />
 
-            <Route path="student/dashboard" element={<Page />} />
-            <Route path="student/courses" element={<Courses />} />
-            <Route path="student/assignments" element={<Assignments />} />
-            <Route path="student/quizzes" element={<div>Quizzes Page</div>} />
-            <Route path="student/grades" element={<Grades />} />
-            <Route path="student/messages" element={<Messages />} />
-            <Route path="student/settings" element={<Settings />} />
-            <Route path="student/help" element={<div>Help Page</div>} />
-            <Route path="logout" element={<div>Logout Page</div>} />
-          </Route>
-        )}
-      </Routes>
-    </BrowserRouter>
+              <Route path="student/dashboard" element={<StudentDashboard />} />
+              <Route path="student/courses" element={<Courses />} />
+              <Route path="student/assignments" element={<Assignments />} />
+              <Route path="student/quiz" element={<Quiz />} />
+              <Route path="student/grades" element={<Grades />} />
+              <Route path="student/messages" element={<Messages />} />
+              <Route path="student/settings" element={<Settings />} />
+              <Route path="student/help" element={<div>Help Page</div>} />
+              <Route path="logout" element={<div>Logout Page</div>} />
+            </Route>
+          )}
+        </Routes>
+      </BrowserRouter>
+    </UserProvider>
   )
 }
 
