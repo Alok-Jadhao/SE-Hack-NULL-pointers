@@ -1,11 +1,12 @@
 import { Home, BookOpen, ClipboardList, BarChart2, MessageSquare, Settings, LogOut, HelpCircle, Bell, ChevronLeft, ChevronRight } from "lucide-react"
 import { useState } from "react"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import Calendar from "./Calendar"
 import { studentData } from "../pages/student/dummyData"
 
 export default function StudentSidebar() {
   const location = useLocation()
+  const navigate = useNavigate()
   const [isCollapsed, setIsCollapsed] = useState(false)
   const { profile, stats, notifications } = studentData
 
@@ -21,6 +22,14 @@ export default function StudentSidebar() {
 
   const unreadNotifications = notifications.filter(n => !n.read).length
   const progressPercentage = Math.round((stats.completedCourses / stats.totalCourses) * 100)
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('user')
+    navigate('/login')
+  }
 
   return (
     <div className={`${isCollapsed ? 'w-16' : 'w-64'} fixed left-0 top-0 h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out relative`}>
@@ -113,10 +122,13 @@ export default function StudentSidebar() {
             <HelpCircle size={20} />
             <span className="text-sm">Help & Support</span>
           </Link>
-          <Link to="/logout" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 w-full text-left"
+          >
             <LogOut size={20} />
             <span className="text-sm">Logout</span>
-          </Link>
+          </button>
         </div>
       )}
     </div>

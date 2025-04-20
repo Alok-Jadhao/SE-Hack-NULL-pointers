@@ -82,9 +82,14 @@ export default function SignInForm() {
     }
 
     setSuccess(true);
-    // Redirect to dashboard or home page after successful login
+    setError('');
+
+    // Determine the redirect path based on role
+    const redirectPath = data.role === 'instructor' ? '/instructor/dashboard' : '/student/dashboard';
+
+    // Redirect after a short delay
     setTimeout(() => {
-      navigate('/dashboard');
+      navigate(redirectPath);
     }, 1500);
   };
 
