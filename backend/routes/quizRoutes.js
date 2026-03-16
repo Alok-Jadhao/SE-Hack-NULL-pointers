@@ -1,28 +1,30 @@
-const express = require('express');
+import express from 'express';
+import {
+  getQuizzes,
+  getQuiz,
+  createQuiz,
+  updateQuiz,
+  deleteQuiz,
+  startQuiz,
+  submitQuiz,
+  joinQuizByCode
+} from '../controllers/quizController.js';
+import { protect, authorize } from '../middleware/auth.js';
+
 const router = express.Router();
-const quizController = require('../controllers/quizController');
-const upload = require('../utils/fileUpload');
-const auth = require('../middleware/auth');
 
-// Create a new quiz (instructor only)
-router.post('/', auth, quizController.createQuiz);
+router.route('/')
+  .get(protect, getQuizzes)
+  .post(protect, authorize('instructor', 'admin'), createQuiz);
 
-// Get all quizzes for a course
-router.get('/course/:courseId', auth, quizController.getCourseQuizzes);
+router.get('/join/:code', protect, joinQuizByCode);
+    
+router.route('/:id')
+  .get(protect, getQuiz)
+  .put(protect, authorize('instructor', 'admin'), updateQuiz)
+  .delete(protect, authorize('instructor', 'admin'), deleteQuiz);
 
-// Get a specific quiz
-router.get('/:id', auth, quizController.getQuiz);
+router.post('/:id/start', protect, authorize('instructor', 'admin'), startQuiz);
+router.post('/:id/submit', protect, submitQuiz);
 
-// Update a quiz (instructor only)
-router.put('/:id', auth, quizController.updateQuiz);
-
-// Delete a quiz (instructor only)
-router.delete('/:id', auth, quizController.deleteQuiz);
-
-// Submit quiz attempt (students)
-router.post('/:id/submit', auth, quizController.submitQuiz);
-
-// Add this new route for file upload
-router.post('/upload', auth, upload.single('file'), quizController.uploadQuiz);
-
-module.exports = router; 
+export default router;

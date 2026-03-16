@@ -1,83 +1,90 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const quizSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    course: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course',
-        required: true
-    },
-    questions: [{
-        questionText: {
-            type: String,
-            required: true
-        },
-        options: [{
-            text: {
-                type: String,
-                required: true
-            },
-            isCorrect: {
-                type: Boolean,
-                required: true
-            }
-        }],
-        explanation: {
-            type: String,
-            default: ''
-        },
-        points: {
-            type: Number,
-            default: 1
-        }
-    }],
-    timeLimit: {
-        type: Number,  // in minutes
-        default: 30
-    },
-    passingScore: {
-        type: Number,
-        required: true,
-        min: 0,
-        max: 100
-    },
-    attempts: {
-        type: Number,
-        default: 1  // number of attempts allowed
-    },
-    created: {
-        type: Date,
-        default: Date.now
-    },
-    updated: {
-        type: Date,
-        default: Date.now
-    },
-    isPublished: {
-        type: Boolean,
-        default: false
-    },
-    attachments: [{
-        fileName: String,
-        fileUrl: String,
-        fileType: String,
-        uploadDate: {
-            type: Date,
-            default: Date.now
-        }
-    }],
-    uploadedQuizData: {
-        type: Object,
-        default: null
-    }
+const questionSchema = new mongoose.Schema({
+  question: {
+    type: String,
+    required: true
+  },
+  options: [{
+    type: String,
+    required: true
+  }],
+  correctAnswer: {
+    type: Number, // index of correct option
+    required: true
+  },
+  points: {
+    type: Number,
+    default: 10
+  },
+  timeLimit: {
+    type: Number, // seconds per question
+    default: 30
+  }
 });
 
-module.exports = mongoose.model('Quiz', quizSchema); 
+const quizSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: [true, 'Quiz title is required'],
+    trim: true
+  },
+  description: String,
+  creator: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  course: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course'
+  },
+  questions: [questionSchema],
+  quizCode: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
+  isLive: {
+    type: Boolean,
+    default: false
+  },
+  startTime: Date,
+  endTime: Date,
+  participants: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    score: {
+      type: Number,
+      default: 0
+    },
+    answers: [{
+      questionId: mongoose.Schema.Types.ObjectId,
+      selectedAnswer: Number,
+      isCorrect: Boolean,
+      timeTaken: Number // seconds
+    }],
+    completedAt: Date
+  }],
+  maxParticipants: Number,
+  passingScore: {
+    type: Number,
+    default: 60
+  }
+}, {
+  timestamps: true
+});
+
+// Generate unique quiz code
+quizSchema.pre('save', async function(next) {
+  if (this.isNew && !this.quizCode) {
+    this.quizCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+  }
+  next();
+});
+
+const Quiz = mongoose.model('Quiz', quizSchema);
+
+export default Quiz;

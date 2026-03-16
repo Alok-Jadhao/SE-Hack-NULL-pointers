@@ -1,15 +1,12 @@
-const express = require('express');
+import express from 'express';
+import { register, login, getMe, updateProfile } from '../controllers/authController.js';
+import { protect } from '../middleware/auth.js';
+
 const router = express.Router();
-const { registerUser, loginUser, getUserProfile } = require('../controllers/authController');
-const { handleGoogleAuth } = require('../controllers/googleAuthController');
-const { protect } = require('../middleware/authMiddleware');
 
-// Public routes
-router.post('/register', registerUser);
-router.post('/login', loginUser);
-router.post('/google', handleGoogleAuth);
+router.post('/register', register);
+router.post('/login', login);
+router.get('/me', protect, getMe);
+router.put('/profile', protect, updateProfile);
 
-// Protected routes
-router.get('/profile', protect, getUserProfile);
-
-module.exports = router; 
+export default router;

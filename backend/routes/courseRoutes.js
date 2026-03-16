@@ -1,12 +1,25 @@
-const express = require('express');
+import express from 'express';
+import {
+  getCourses,
+  getCourse,
+  createCourse,
+  updateCourse,
+  deleteCourse,
+  enrollCourse
+} from '../controllers/courseController.js';
+import { protect, authorize } from '../middleware/auth.js';
+
 const router = express.Router();
-const { createCourse, getAllCourses } = require('../controllers/courseController');
-const { protect } = require('../middleware/authMiddleware');
 
-// Public routes
-router.get('/', getAllCourses);
+router.route('/')
+  .get(getCourses)
+  .post(protect, authorize('instructor', 'admin'), createCourse);
 
-// Protected routes
-router.post('/', protect, createCourse);
+router.route('/:id')
+  .get(getCourse)
+  .put(protect, authorize('instructor', 'admin'), updateCourse)
+  .delete(protect, authorize('instructor', 'admin'), deleteCourse);
 
-module.exports = router;
+router.post('/:id/enroll', protect, authorize('student'), enrollCourse);
+
+export default router;
