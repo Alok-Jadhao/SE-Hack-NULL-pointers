@@ -10,6 +10,7 @@ import { setupQuizSocket } from './socket/quizSocket.js';
 import authRoutes from './routes/authRoutes.js';
 import courseRoutes from './routes/courseRoutes.js';
 import quizRoutes from './routes/quizRoutes.js';
+import seedRoutes from './routes/seedRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -39,13 +40,23 @@ app.use(express.urlencoded({ extended: true }));
 
 // Basic route
 app.get('/', (req, res) => {
-  res.json({ message: 'Campus LMS API is running' });
+  res.json({
+    message: 'Campus LMS API is running',
+    version: '1.0.0',
+    endpoints: {
+      auth: '/api/auth',
+      courses: '/api/courses',
+      quizzes: '/api/quizzes',
+      seed: '/api/seed'
+    }
+  });
 });
 
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/quizzes', quizRoutes);
+app.use('/api/seed', seedRoutes);
 
 // Setup Socket.io for quiz battles
 setupQuizSocket(io);
@@ -67,6 +78,8 @@ const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`To seed database: POST http://localhost:${PORT}/api/seed`);
 });
 
 export { io };
+
