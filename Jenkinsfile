@@ -7,12 +7,6 @@ pipeline {
 
     stages {
 
-        stage('Clone Repo') {
-            steps {
-                git 'https://github.com/Omkar-Pandurang-Jadhav/SE-Hack-NULL-pointers'
-            }
-        }
-
         stage('Build Backend Image') {
             steps {
                 sh 'docker build -t scoute/backend:latest ./backend'
