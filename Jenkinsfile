@@ -7,6 +7,11 @@ pipeline {
 
     stages {
 
+        stage('Docker Cleanup login') {
+            steps {
+                sh 'docker logout || true'
+            }
+        }
         stage('Build Backend Image') {
             steps {
                 sh 'docker build -t scoute/backend:latest ./backend'
