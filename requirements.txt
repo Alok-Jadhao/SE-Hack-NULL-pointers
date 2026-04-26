@@ -1,0 +1,11 @@
+# Project requirements for Campus LMS with Multiplayer Quiz Battles
+# This repository is a Node.js application, so the required setup is runtime tooling
+# rather than Python packages.
+
+Node.js >= 16
+npm >= 8
+MongoDB >= 5
+
+# Optional but recommended for development:
+# - A .env file with backend environment variables
+# - Google OAuth credentials if you plan to use social login

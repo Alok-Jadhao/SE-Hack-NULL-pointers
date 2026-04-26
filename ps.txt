@@ -1,0 +1,44 @@
+In today’s hybrid education landscape, students face scattered materials,
+passive learning, and disengaging LMS platforms. This system addresses
+those gaps with a campus-focused LMS that combines structured courses, a
+centralized content hub, and real-time multiplayer quizzes to make learning
+engaging and competitive. To build a truly impactful platform, it also tackles
+challenges like content overload, live performance tracking, and equitable
+access - driving better engagement and academic outcomes.
+
+# **Features**
+
+**Role-Based Onboarding & Dashboards**: Simple login via campus email or
+Google, with dashboards tailored to each role-students can track
+progress, join quizzes, and view leaderboards, while instructors can
+manage courses and quizzes.
+
+**Structured Course Creation & Learning Pathways**: Instructors can design
+courses with multimedia content, including videos, PDFs, and slides.
+Sequential locking ensures structured learning with time estimates and
+prerequisites to guide student progress.
+
+**Centralized Content Hub**: A searchable library of course materials,
+community uploads, and versioned content, easily accessible through
+integrated viewers, ensuring students always have the latest resources at
+hand.
+
+**Multiplayer Quiz Battles**: Real-time peer quiz battles with instant
+feedback, live leaderboards, and adaptive scoring. Instructors curate
+quizzes, and departments can host inter-college quiz events, making
+learning competitive and fun.
+
+**Bonus Features**
+
+Performance Dashboards: Detailed analytics for students to track
+accuracy, trends, and progress. Instructors gain insights into group
+and individual performance to address engagement and academic
+needs.
+
+Seamless User Experience Across Devices: Fully optimized for both
+mobile and desktop, with offline access, responsive design, and
+light/dark mode options, ensuring accessibility in any environment.
+Admin & Moderation Tools: A comprehensive admin panel for
+managing courses, users, and flagged content. Access reports, trends,
+and engagement data for better campus environment management
+and dispute resolution.
