@@ -33,17 +33,24 @@ pipeline {
                     usernameVariable: 'USER',
                     passwordVariable: 'PASS'
                 )]) {
-                    sh 'echo $PASS | docker login -u $USER --password-stdin'
-                    sh 'docker push scoute/backend:$BUILD_NUMBER'
-                    sh 'docker push scoute/frontend:$BUILD_NUMBER'
+                    sh '''
+                    echo $PASS | docker login -u $USER --password-stdin
+                    docker push scoute/backend:$BUILD_NUMBER
+                    docker push scoute/frontend:$BUILD_NUMBER
+                    '''
                 }
             }
         }
-        
+
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl rollout restart deployment/backend backend=scoute/backend:$BUILD_NUMBER'
-                sh 'kubectl rollout restart deployment/frontend frontend=scoute/frontend:$BUILD_NUMBER'
+                sh '''
+                kubectl set image deployment/backend backend=scoute/backend:$BUILD_NUMBER
+                kubectl set image deployment/frontend frontend=scoute/frontend:$BUILD_NUMBER
+
+                kubectl rollout status deployment/backend
+                kubectl rollout status deployment/frontend
+                '''
             }
         }
     }
