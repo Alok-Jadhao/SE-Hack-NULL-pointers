@@ -29,7 +29,7 @@ export function LoginPage() {
     try {
       if (isLogin) {
         await login(email, password);
-        toast.success('Chutiya ho kya!');
+        toast.success('Welcome back!');
       } else {
         await register(email, password, name, role);
         toast.success('Account created successfully!');
