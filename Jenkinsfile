@@ -39,7 +39,15 @@ pipeline {
                 }
             }
         }
-
+        stage('Create K8s Secret') {
+            steps {
+                sh '''
+                    kubectl delete secret backend-secret --ignore-not-found
+                    kubectl create secret generic backend-secret \
+                    --from-env-file=backend/.env
+                '''
+            }
+        }
         stage('Deploy to Kubernetes') {
             steps {
                 sh 'kubectl rollout restart deployment backend'
