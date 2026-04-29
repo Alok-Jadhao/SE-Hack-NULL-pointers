@@ -14,6 +14,30 @@ pipeline {
             }
         }
 
+        // 🔥 ADD THIS
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                    sonar-scanner \
+                      -Dsonar.projectKey=campus-quiz \
+                      -Dsonar.sources=. \
+                      -Dsonar.host.url=http://host.docker.internal:9000 \
+                      -Dsonar.login=$SONAR_AUTH_TOKEN
+                    '''
+                }
+            }
+        }
+
+        // 🔥 ADD THIS
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
         stage('Build Backend Image') {
             steps {
                 sh 'docker build -t scoute/backend:$BUILD_NUMBER ./backend'
