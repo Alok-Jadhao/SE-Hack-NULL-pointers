@@ -14,22 +14,25 @@ pipeline {
             }
         }
 
-        // 🔥 ADD THIS
+        // 🔥 SONARQUBE ANALYSIS
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh '''
-                    sonar-scanner \
-                      -Dsonar.projectKey=campus-quiz \
-                      -Dsonar.sources=. \
-                      -Dsonar.host.url=http://host.docker.internal:9000 \
-                      -Dsonar.login=$SONAR_AUTH_TOKEN
-                    '''
+                    script {
+                        def scannerHome = tool 'SonarScanner'
+                        sh """
+                        ${scannerHome}/bin/sonar-scanner \
+                          -Dsonar.projectKey=campus-quiz \
+                          -Dsonar.sources=. \
+                          -Dsonar.host.url=http://host.docker.internal:9000 \
+                          -Dsonar.login=$SONAR_AUTH_TOKEN
+                        """
+                    }
                 }
             }
         }
 
-        // 🔥 ADD THIS
+        // 🔥 QUALITY GATE
         stage('Quality Gate') {
             steps {
                 timeout(time: 2, unit: 'MINUTES') {
@@ -38,6 +41,7 @@ pipeline {
             }
         }
 
+        // 🚀 BUILD IMAGES
         stage('Build Backend Image') {
             steps {
                 sh 'docker build -t scoute/backend:$BUILD_NUMBER ./backend'
@@ -50,6 +54,7 @@ pipeline {
             }
         }
 
+        // 🚀 PUSH IMAGES
         stage('Push Images') {
             steps {
                 withCredentials([usernamePassword(
@@ -66,6 +71,7 @@ pipeline {
             }
         }
 
+        // 🚀 DEPLOY TO K8S
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
