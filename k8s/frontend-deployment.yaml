@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: scoute/frontend:latest
+          image: scoute/frontend   # 👈 no tag here
           imagePullPolicy: Always
           ports:
             - containerPort: 80
