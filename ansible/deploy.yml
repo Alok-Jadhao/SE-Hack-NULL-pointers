@@ -1,0 +1,22 @@
+- name: Deploy app to Kubernetes
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    backend_image: "scoute/backend:{{ build_number }}"
+    frontend_image: "scoute/frontend:{{ build_number }}"
+
+  tasks:
+
+    - name: Update backend image
+      command: kubectl set image deployment/backend backend={{ backend_image }}
+
+    - name: Update frontend image
+      command: kubectl set image deployment/frontend frontend={{ frontend_image }}
+
+    - name: Wait for backend rollout
+      command: kubectl rollout status deployment backend
+
+    - name: Wait for frontend rollout
+      command: kubectl rollout status deployment frontend

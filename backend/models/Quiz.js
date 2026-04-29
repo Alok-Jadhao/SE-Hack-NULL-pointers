@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import crypto from 'crypto';
 
 const questionSchema = new mongoose.Schema({
   question: {
@@ -77,10 +78,19 @@ const quizSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Generate unique quiz code
+// 🔥 SECURE UNIQUE QUIZ CODE GENERATION
 quizSchema.pre('save', async function(next) {
   if (this.isNew && !this.quizCode) {
-    this.quizCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    let code;
+    let exists = true;
+
+    while (exists) {
+      code = crypto.randomBytes(3).toString('hex').toUpperCase(); // 6-char code
+      const existingQuiz = await mongoose.models.Quiz.findOne({ quizCode: code });
+      if (!existingQuiz) exists = false;
+    }
+
+    this.quizCode = code;
   }
   next();
 });
