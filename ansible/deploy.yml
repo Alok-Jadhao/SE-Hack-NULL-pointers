@@ -15,18 +15,6 @@
     - name: Update frontend image
       command: kubectl set image deployment/frontend frontend={{ frontend_image }}
 
-    - name: Apply backend deployment
-      command: kubectl apply -f ../k8s/backend-deployment.yaml
-
-    - name: Apply frontend deployment
-      command: kubectl apply -f ../k8s/frontend-deployment.yaml
-
-    - name: Restart backend deployment
-      command: kubectl rollout restart deployment backend
-
-    - name: Restart frontend deployment
-      command: kubectl rollout restart deployment frontend
-
     - name: Wait for backend rollout
       command: kubectl rollout status deployment backend
 
