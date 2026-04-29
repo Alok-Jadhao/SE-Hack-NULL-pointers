@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router";
 import { RootLayout } from "./components/RootLayout";
-import { LoginPage } from "./pages/LoginPage";
+import { LoginPage } from "./pages/LoginPage.jsx";
 import { StudentDashboard } from "./pages/StudentDashboard";
 import { InstructorDashboard } from "./pages/InstructorDashboard";
 import { AdminDashboard } from "./pages/AdminDashboard";
