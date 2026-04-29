@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKER_USER = "scoute"
+        KUBECONFIG = "/var/jenkins_home/.kube/config"
     }
 
     stages {
@@ -12,6 +13,7 @@ pipeline {
                 sh 'docker logout || true'
             }
         }
+
         stage('Build Backend Image') {
             steps {
                 sh 'docker build -t scoute/backend:latest ./backend'

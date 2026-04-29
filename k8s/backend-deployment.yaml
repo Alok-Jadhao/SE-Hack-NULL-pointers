@@ -15,8 +15,9 @@ spec:
       containers:
         - name: backend
           image: scoute/backend:latest
+          imagePullPolicy: Always
           ports:
-            - containerPort: 5000
+            - containerPort: 5001
           envFrom:
             - secretRef:
                 name: backend-secret
